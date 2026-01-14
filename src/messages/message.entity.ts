@@ -19,7 +19,7 @@ export class Message {
     content: string;
 
     @Column()
-    userId: string;
+    userId: number;
 
     @ManyToOne(() => User, (user) => user.messages, {
         onDelete: 'CASCADE',
@@ -28,7 +28,7 @@ export class Message {
     user: User;
 
     @Column()
-    chatId: string;
+    chatId: number;
 
     @ManyToOne(() => Chat, (chat) => chat.messages, {
         onDelete: 'CASCADE',
