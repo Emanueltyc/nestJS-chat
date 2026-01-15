@@ -57,6 +57,10 @@ export class ChatsService {
         throw new NotFoundException('No chat was found');
     }
 
+    async getUsersByChatId(id: number): Promise<ChatUser[]> {
+        return this.chatUserRepository.findBy({ chatId: id });
+    }
+
     sendMessage(client: Socket, payload: MessageDto) {
         client.emit('message', payload);
     }

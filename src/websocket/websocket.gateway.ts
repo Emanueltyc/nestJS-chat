@@ -6,8 +6,11 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { MessageDto } from '../messages/dto/message.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { MessagesService } from 'src/messages/messages.service';
+import { ChatsService } from 'src/chats/chats.service';
+import { WebsocketMiddleware } from 'src/auth/websocket.middleware';
+import { WebsocketPayloadDto } from './dto/websocket-payload.dto';
 
 @UsePipes(
     new ValidationPipe({
@@ -18,11 +21,24 @@ import { UsePipes, ValidationPipe } from '@nestjs/common';
 )
 @WebSocketGateway()
 export class WebsocketGateway {
+    constructor(
+        private messagesService: MessagesService,
+        private chatsService: ChatsService,
+        private websocketMiddleware: WebsocketMiddleware,
+    ) {}
+
     @WebSocketServer()
     server: Server;
 
+    onModuleInit() {
+        this.server.use(
+            this.websocketMiddleware.use.bind(this.websocketMiddleware),
+        );
+    }
+
     handleConnection(client: Socket) {
         console.log('Client connected:', client.id);
+        client.join(client.data.userId.toString());
     }
 
     handleDisconnect(client: Socket) {
@@ -30,11 +46,19 @@ export class WebsocketGateway {
     }
 
     @SubscribeMessage('message')
-    handleMessage(
+    async handleMessage(
         @MessageBody()
-        payload: MessageDto,
+        payload: WebsocketPayloadDto,
         @ConnectedSocket() client: Socket,
     ) {
-        // to implement
+        this.messagesService.save({ userId: client.data.userId, ...payload });
+
+        const users = await this.chatsService.getUsersByChatId(payload.chatId);
+
+        users
+            .filter((u) => u.userId != client.data.userId)
+            .forEach((u) =>
+                client.in(u.userId.toString()).emit('message', payload),
+            );
     }
 }
