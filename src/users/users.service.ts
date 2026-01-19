@@ -8,6 +8,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { UserResponseDto } from './dto/user-response.dto';
+import { SearchResponseDto } from './dto/search-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -40,6 +41,32 @@ export class UsersService {
         }
 
         throw new NotFoundException('User not found');
+    }
+
+    async search(
+        name?: string,
+        email?: string,
+        limit: number = 10,
+        offset: number = 0,
+    ): Promise<SearchResponseDto> {
+        const qb = this.usersRepository.createQueryBuilder('user');
+
+        name &&
+            qb.andWhere('user.name ILIKE :name', {
+                name: `%${name}%`,
+            });
+
+        email &&
+            qb.andWhere('user.email = :email', {
+                email: email,
+            });
+
+        const [users, total] = await qb
+            .take(limit)
+            .skip(offset)
+            .getManyAndCount();
+
+        return new SearchResponseDto(users, total, limit, offset);
     }
 
     async findByEmail(email: string): Promise<User | null> {
