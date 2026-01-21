@@ -61,6 +61,8 @@ export class UsersService {
                 email: email,
             });
 
+        limit = Math.min(limit, 100);
+
         const [users, total] = await qb
             .take(limit)
             .skip(offset)
