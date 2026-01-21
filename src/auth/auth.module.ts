@@ -15,7 +15,7 @@ import { WebsocketMiddleware } from './websocket.middleware';
             useFactory: (config: ConfigService) => ({
                 secret: config.get<string>('JWT_SECRET'),
                 signOptions: {
-                    expiresIn: '1d',
+                    expiresIn: config.get<number>('JWT_EXPIRES_IN'),
                 },
             }),
         }),

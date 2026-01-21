@@ -22,9 +22,13 @@ export class AuthService {
         }
 
         const payload = { sub: user?.id, email: user?.email };
+
         return {
             user: new UserResponseDto(user),
             access_token: await this.jwtService.signAsync(payload),
+            expires_at: calculateExpirationDate(
+                Number(process.env.JWT_EXPIRES_IN),
+            ),
         };
     }
 
@@ -35,6 +39,13 @@ export class AuthService {
         return {
             user,
             access_token: await this.jwtService.signAsync(payload),
+            expires_at: calculateExpirationDate(
+                Number(process.env.JWT_EXPIRES_IN),
+            ),
         };
     }
+}
+
+function calculateExpirationDate(expiresInSeconds: number): Date {
+    return new Date(Date.now() + expiresInSeconds * 1000);
 }
