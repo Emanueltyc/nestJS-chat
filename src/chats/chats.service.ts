@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { MessageDto } from 'src/messages/dto/message.dto';
+import { MessageCreateDto } from 'src/messages/dto/message-create.dto';
 import { Repository } from 'typeorm';
 import { Chat } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -61,7 +61,7 @@ export class ChatsService {
         return this.chatUserRepository.findBy({ chatId: id });
     }
 
-    sendMessage(client: Socket, payload: MessageDto) {
+    sendMessage(client: Socket, payload: MessageCreateDto) {
         client.emit('message', payload);
     }
 }
