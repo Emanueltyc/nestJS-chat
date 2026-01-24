@@ -50,11 +50,7 @@ export class ChatsService {
             .leftJoinAndSelect('chatUser.user', 'user')
             .getMany();
 
-        if (chats) {
-            return chats.map((c) => new ChatResponseDto(c));
-        }
-
-        throw new NotFoundException('No chat was found');
+        return chats.map((c) => new ChatResponseDto(c));
     }
 
     async getUsersByChatId(id: number): Promise<ChatUser[]> {
