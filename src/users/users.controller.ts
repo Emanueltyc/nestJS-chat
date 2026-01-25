@@ -10,6 +10,7 @@ import { UsersService } from './users.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { SearchResponseDto } from './dto/search-response.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { SearchQueryDto } from './dto/search-query.dto';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -23,10 +24,7 @@ export class UsersController {
 
     @Get('search')
     async search(
-        @Query('name') name?: string,
-        @Query('email') email?: string,
-        @Query('limit') limit?: number,
-        @Query('offset') offset?: number,
+        @Query() { name, email, limit, offset }: SearchQueryDto,
     ): Promise<SearchResponseDto> {
         return this.usersService.search(name, email, limit, offset);
     }
