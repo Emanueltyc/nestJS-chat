@@ -4,9 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MessagesService } from './messages.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { MessagesController } from './messages.controller';
+import { ChatsModule } from 'src/chats/chats.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Message]), AuthModule],
+    imports: [TypeOrmModule.forFeature([Message]), AuthModule, ChatsModule],
     providers: [MessagesService],
     exports: [MessagesService],
     controllers: [MessagesController],
