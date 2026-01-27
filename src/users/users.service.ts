@@ -28,11 +28,6 @@ export class UsersService {
         return new UserResponseDto(user);
     }
 
-    async findAll(): Promise<UserResponseDto[]> {
-        const users = await this.usersRepository.find();
-        return users.map((user: User) => new UserResponseDto(user));
-    }
-
     async findByID(id: number): Promise<UserResponseDto> {
         const user = await this.usersRepository.findOneBy({ id: id });
 

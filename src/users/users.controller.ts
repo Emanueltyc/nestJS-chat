@@ -17,11 +17,6 @@ import { SearchQueryDto } from './dto/search-query.dto';
 export class UsersController {
     constructor(private usersService: UsersService) {}
 
-    @Get()
-    async findAll(): Promise<UserResponseDto[]> {
-        return this.usersService.findAll();
-    }
-
     @Get('search')
     async search(
         @Query() { name, email, limit, offset }: SearchQueryDto,
